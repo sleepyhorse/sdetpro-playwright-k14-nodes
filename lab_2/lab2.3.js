@@ -5,6 +5,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+
 // Function to calculate BMI
 function calculateBMI(weight, height) {
   return weight / (height * height);
@@ -24,9 +25,13 @@ function categorizeBMI(bmi) {
 }
 
 // Function to suggest adjustments
-function suggestAdjustments(category) {
+function suggestAdjustments(category,height,weight) {
     if (category === "Underweight") {
         const targetWeight = 18.5 * Math.pow(height, 2);
+        // Check if weight is already greater than or equal to the target weight
+        if (weight >= targetWeight) {
+            return "Your weight is already within a healthy range.";
+        }
         const adjustment = targetWeight - weight;
         return `Suggestion: Increase weight by ${adjustment.toFixed(2)} kg`;
       } else if (category === "Normal weight") {
@@ -39,8 +44,10 @@ function suggestAdjustments(category) {
     }
 
 // Get input from the user
+let height, weight;
 rl.question("Enter height in meters (m): ", function(height) {
   rl.question("Enter weight in kilograms (kg): ", function(weight) {
+    
     // Convert input to numbers
     height = parseFloat(height);
     weight = parseFloat(weight);
@@ -54,7 +61,7 @@ rl.question("Enter height in meters (m): ", function(height) {
       let category = categorizeBMI(bmi);
 
       // Suggest adjustments
-      let adjustmentSuggestion = suggestAdjustments(category);
+      let adjustmentSuggestion = suggestAdjustments(category,height,weight);
 
       // Print the result
       console.log(`BMI: ${bmi.toFixed(2)}`);
