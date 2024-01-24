@@ -25,19 +25,18 @@ function categorizeBMI(bmi) {
 
 // Function to suggest adjustments
 function suggestAdjustments(category) {
-  switch (category) {
-    case "Underweight":
-      return "You may want to increase your weight for a healthier BMI.";
-    case "Normal weight":
-      return "Maintain your weight for a healthy BMI.";
-    case "Overweight":
-      return "Consider losing weight for a healthier BMI.";
-    case "Obesity":
-      return "It's recommended to consult with a healthcare professional for weight management.";
-    default:
-      return "";
-  }
-}
+    if (category === "Underweight") {
+        const targetWeight = 18.5 * Math.pow(height, 2);
+        const adjustment = targetWeight - weight;
+        return `Suggestion: Increase weight by ${adjustment.toFixed(2)} kg`;
+      } else if (category === "Normal weight") {
+        return "Suggestion: Maintain your current weight, it falls within the normal range.";
+      } else if (category === "Overweight" || category === "Obesity") {
+        const targetWeight = 24.9 * Math.pow(height, 2);
+        const adjustment = weight - targetWeight;
+        return `Suggestion: Decrease weight by ${adjustment.toFixed(2)} kg`;
+      }
+    }
 
 // Get input from the user
 rl.question("Enter height in meters (m): ", function(height) {
@@ -60,7 +59,7 @@ rl.question("Enter height in meters (m): ", function(height) {
       // Print the result
       console.log(`BMI: ${bmi.toFixed(2)}`);
       console.log(`Category: ${category}`);
-      console.log(adjustmentSuggestion);
+      console.log(`${adjustmentSuggestion}`);
 
       // Close the interface
       rl.close();
