@@ -7,8 +7,28 @@ function sortArray(arr) {
     return arr;
   }
   
-  // Example usage
-  const numbers = [9, 5, 6, 9, 1];
-  const sortedArray = sortArray(numbers);
-  console.log(`Sorted array: ${sortedArray}`);
+  // Function to sort an integer array from min to max using bubble sort algorithm
+function bubbleSort(arr) {
+  const n = arr.length;
+
+  for (let i = 0; i < n - 1; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+          if (arr[j] > arr[j + 1]) {
+              // Swap arr[j] and arr[j+1]
+              let temp = arr[j];
+              arr[j] = arr[j + 1];
+              arr[j + 1] = temp;
+          }
+      }
+  }
+
+  return arr;
+}
+
+// Test the function
+const inputArray = [12, 34, 1, 16, 28];
+console.log("Input array:", inputArray);
+
+const sortedArray = bubbleSort(inputArray.slice()); // Make a copy to avoid modifying the original array
+console.log("Sorted array:", sortedArray);
   
