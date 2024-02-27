@@ -1,26 +1,44 @@
-const fetch = require('node-fetch'); // npm install node-fetch
-import fetch from 'node-fetch';
-// Function to fetch post content by postId
+// Simulated database containing user data and posts
+const database = {
+    users: {
+        1: { name: "John", posts: [101, 102] },
+        2: { name: "Alice", posts: [103, 104] }
+    },
+    posts: {
+        101: { title: "Post 1 by John", content: "Content of post 1" },
+        102: { title: "Post 2 by John", content: "Content of post 2" },
+        103: { title: "Post 1 by Alice", content: "Content of post 1" },
+        104: { title: "Post 2 by Alice", content: "Content of post 2" }
+    }
+};
+
+// Function to simulate fetching post content by postId
 function fetchPostContent(postId) {
-    return fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Post not found');
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const post = database.posts[postId];
+            if (post) {
+                resolve(post.content);
+            } else {
+                reject(new Error("Post not found"));
             }
-            return response.json();
-        })
-        .then(data => data.body);
+        }, 1000); // Simulating delay
+    });
 }
 
-// Function to fetch all posts for a user by userId
+// Function to simulate fetching user's posts
 function fetchUserPosts(userId) {
-    return fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('User not found');
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const user = database.users[userId];
+            if (user) {
+                const posts = user.posts.map(postId => database.posts[postId]);
+                resolve(posts);
+            } else {
+                reject(new Error("User not found"));
             }
-            return response.json();
-        });
+        }, 1000); // Simulating delay
+    });
 }
 
 // Prompt user to input userId and postId
@@ -40,7 +58,7 @@ rl.question("Enter user ID: ", (userId) => {
             .then((posts) => {
                 console.log(`All Posts for User ID ${userId}:`);
                 posts.forEach(post => {
-                    console.log(`Title: ${post.title}, Content: ${post.body}`);
+                    console.log(`Title: ${post.title}, Content: ${post.content}`);
                 });
             })
             .catch((error) => {
