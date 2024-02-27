@@ -39,11 +39,15 @@ function printAccountInfo(account) {
 function withdrawMoney(accountNumber, amount) {
     let account = findAccount(accountNumber);
     if (account) {
-        if (amount <= account.balance) {
-            account.balance -= amount;
-            console.log(`Withdrawal successful. Updated balance: $${account.balance}`);
+        if(amount >0){
+            if (amount <= account.balance) {
+                account.balance -= amount;
+                console.log(`Withdrawal successful. Updated balance: $${account.balance}`);
+            } else {
+                console.log("Insufficient funds. Withdrawal not allowed.");
+            }      
         } else {
-            console.log("Insufficient funds. Withdrawal not allowed.");
+            console.log("Amount must be >0");
         }
     } else {
         console.log("Account not found.");
