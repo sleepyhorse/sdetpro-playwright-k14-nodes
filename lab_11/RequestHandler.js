@@ -1,42 +1,66 @@
-const Post = require('./Post');
+const { sendRequest } = require('./RequestHelper.js')
+const Post = require("./Post")
 
 class RequestHandler {
 
-    async printTargetPost(userId, postId) {
-        try {
-            const post = await this._getPostById(postId);
-            console.log(post.toString());
-        } catch (error) {
-            console.error(error.message);
+    constructor() {
+
+    }
+
+    async getTargetPost(userId, postId, url) {
+        //Contruct the returned data as a Post data model from class Post
+        const filterPosts = await this._getAllPosts(userId, url);
+        const targetPost = filterPosts.filter(function (post) {
+            return (post.id === postId)
+        })[0];
+
+
+        const post = await this._convertToPostObj(targetPost)
+        return post
+
+    }
+    async printTargetPost(targetPost) {
+        if (targetPost) {
+            console.log(targetPost);
+        } else {
+            console.log(' The post not exist');
         }
     }
 
-    async printAllPosts(userId) {
-        try {
-            const allPosts = await this._getAllPosts(userId);
-            allPosts.forEach(post => console.log(post.toString()));
-        } catch (error) {
-            console.error(error.message);
+    //Contruct the returned data as a [ Post data model from class Post
+    async printAllPosts(userId, url) {
+        let filterPosts = await this._getAllPosts(userId, url);
+        console.log(filterPosts);
+
+    }
+    async getAllPosts(userId, url) {
+        let postArr = [];
+        let allPost = await this._getAllPosts(userId, url);
+       
+        for (let index = 0; index < allPost.length; index++) {
+            const post = await this._convertToPostObj(allPost[index])
+            postArr.push(post)
+            
         }
+       return postArr;
+
+    }
+    async _getAllPosts(userId, url) {
+        const posts = await sendRequest(url);
+        return posts.filter(function (post) {
+            return (post.userId === userId)
+        })
+
+
     }
 
-    async _getPostById(postId) {
-        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch post with ID ${postId}`);
-        }
-        const postData = await response.json();
-        return new Post(postData.userId, postData.id, postData.title, postData.body);
-    }
-
-    async _getAllPosts(userId) {
-        const response = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch posts for user ${userId}`);
-        }
-        const postData = await response.json();
-        return postData.map(post => new Post(post.userId, post.id, post.title, post.body));
+    async _convertToPostObj(rawData) {
+        const post = new Post()
+        Object.keys(rawData).forEach(key => {
+            post[key] = rawData[key];
+        });
+        return post;
     }
 }
 
-module.exports = RequestHandler;
+module.exports = RequestHandler
